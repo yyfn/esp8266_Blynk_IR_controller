@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+	<title>万能遥控器</title>
+	<style type="text/css">
+		*{
+			margin-bottom: 10px;
+		}
+		body {
+    		display: flex;
+    		flex-direction: column;
+    		align-items: center;
+    		zoom:1.2;
+		}
+    	.wifi_setting{ 
+    		width: 100%;
+    		max-width: 500px;
+    		display: flex;
+    		flex-direction: column;
+    		align-content: center;
+
+    	}
+	</style>
+</head>
+<body>
+	<div class="wifi_setting">
+		<h2>wifi设置</h2>
+		<h3>请输入你的wifi的ssid和密码</h3>
+		<h3 id="error_msg" style="color:#ff0000;display:none;"></h3>
+		<input type="text" name="wifi_ssid" id="wifi_ssid" style="display:block;" placeholder="SSID"/>
+		<input type="text" name="wifi_pass" id="wifi_pass" style="display:block;" placeholder="密码"/>
+		<input type="button" name="" class="" onclick="link_wifi()" value="连接"/>
+	</div>
+
+	<script>
+		function link_wifi(){//连接wifi
+			document.getElementById("error_msg").style.display="none";
+			var wifi_ssid = document.getElementById("wifi_ssid").value;
+			var wifi_pass = document.getElementById("wifi_pass").value;
+
+			if(wifi_ssid.length == 0){
+
+				alert("请输入wifi的SSID");
+				document.getElementById("error_msg").innerHTML="请输入wifi的SSID";  
+				document.getElementById("error_msg").style.display="inline";
+
+				return false;
+			}
+			if (wifi_pass.length != 0){
+				if(wifi_pass.length>32 || wifi_pass.length < 8){
+					alert("WIFI的密码输入不正确");
+					document.getElementById("error_msg").innerHTML="WIFI的密码输入不正确";  
+					document.getElementById("error_msg").style.display="inline";
+					return false;
+				}
+			}
+			var data = "&SSID=" + wifi_ssid + "&PASS=" + wifi_pass + "";
+			//ajax开始
+			var xmlhttp;
+			if (window.XMLHttpRequest)
+				xmlhttp = new XMLHttpRequest();
+			else
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			xmlhttp.onreadystatechange=function()
+			{
+				if (xmlhttp.readyState==4 && xmlhttp.status==200)
+				{
+					if (xmlhttp.responseText == "1"){
+						alert("连接成功，请打开Blynk进行个性化设置。");
+						document.getElementById("error_msg").innerHTML="连接成功";  
+						document.getElementById("error_msg").style.display="inline";
+					} else {
+						alert("连接失败");
+						document.getElementById("error_msg").innerHTML="连接失败";  
+						document.getElementById("error_msg").style.display="inline";
+					}
+				}
+			}
+			xmlhttp.open("POST","./Link_wifi.x",true);
+			//xmlhttp.setRequestHeader("Content-Length",data.lenght);
+			xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded;"); //用POST的时候一定要有这句
+			xmlhttp.send(data);
+		}
+	</script>
+</body>
+</html>
